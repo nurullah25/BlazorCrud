@@ -1,0 +1,62 @@
+﻿@page "/employee"
+@using MyApp.Data;
+
+
+@inject EmployeeService _empService;
+
+<div class="row">
+    <div class="col">
+        <h2>Employee List</h2>
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary btn-sm" href="addNew">Add New</a>
+        </div>
+        <table class="table table-bordered table-striped table-sm mt-1">
+            <thead class="table-primary">
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Password</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in empAllData)
+                {
+                    <tr>
+                        <td>@item.FirstName</td>
+                        <td>@item.LastName</td>
+                        <td>@item.Email</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.Password</td>
+                        <td>
+                            <button class="btn-success btn-sm" @onclick="()=>EditData(item.Id)">Edit</button>
+                            <button class="btn-danger btn-sm" @onclick="()=>DeleteData(item.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@code {
+    List<Employee> empAllData = new List<Employee>();
+    protected override async Task OnInitializedAsync()
+    {
+        empAllData = await _empService.GetAll();
+        await base.OnInitializedAsync();
+    }
+    public async Task EditData(long id)
+    {
+        NavigationManager.NavigateTo("/editdata/" + id.ToString());
+    }
+    public async Task DeleteData(long id)
+    {
+        bool result = await _empService.DeleteDataById(id);
+        empAllData = await _empService.GetAll();
+        StateHasChanged();
+    }
+}

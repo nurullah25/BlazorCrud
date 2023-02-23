@@ -1,0 +1,57 @@
+﻿@page "/addNew"
+@using MyApp.Data;
+@inject EmployeeService _empService;
+
+<div class="row">
+    <h2>Add New Employee</h2>
+    <div class="col-6">
+        <EditForm Model="@registerModel" OnValidSubmit="@ValidateAndSubmit">
+            <DataAnnotationsValidator />
+            <div class="row mb-2">
+                <label for="firstname" class="col-form-label"><b>First Name</b></label>
+                <input type="text" class="form-control" placeholder="Enter First Name" @bind="@registerModel.FirstName" required />
+                <ValidationMessage For="@(()=>registerModel.FirstName)"></ValidationMessage>
+            </div>
+            <div class="row mb-2">
+                <label for="lastname" class="col-form-label"><b>Last Name</b></label>
+                <input type="text" class="form-control" placeholder="Enter First Name" @bind="@registerModel.LastName" required />
+                <ValidationMessage For="@(()=>registerModel.LastName)"></ValidationMessage>
+            </div>
+            <div class="row mb-2">
+                <label for="email" class="col-form-label"><b>Email</b></label>
+                <input type="text" class="form-control" placeholder="Enter Email" @bind="@registerModel.Email" required />
+                <ValidationMessage For="@(()=>registerModel.Email)"></ValidationMessage>
+            </div>
+            <div class="row mb-2">
+                <label for="mobile" class="col-form-label"><b>Mobile</b></label>
+                <input type="text" class="form-control" placeholder="Enter Mobile No" @bind="@registerModel.Mobile" required />
+                <ValidationMessage For="@(()=>registerModel.Mobile)"></ValidationMessage>
+            </div>
+            <div class="row mb-2">
+                <label for="password" class="col-form-label"><b>Password</b></label>
+                <input type="text" class="form-control" placeholder="Enter Password" @bind="@registerModel.Password" required />
+                <ValidationMessage For="@(()=>registerModel.Password)"></ValidationMessage>
+            </div>
+            <div class="row mb-2 justify-content-end">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    Employee registerModel = new Employee();
+    public async Task ValidateAndSubmit(EditContext context)
+    {
+        bool isAllValid = context.Validate();
+        if (isAllValid)
+        {
+            bool result = await _empService.InsertOrUpdateEmployee(registerModel, "add");
+            if (result)
+            {
+                NavigationManager.NavigateTo("/employee");
+            }
+        }
+    }
+}
